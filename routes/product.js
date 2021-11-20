@@ -1,53 +1,70 @@
-// const express = require("express");
-// const router = express.Router();
+const express = require("express");
+const Product = require("../models/product");
+const router = express.Router();
 
-// const productController = require("../controllers/productController");
+router.get("/addpro", (req, res) => {
+  res.render("pages/addpro");
+});
 
-// router.get("/", (req, res) => {
-//     res.render("product/addOrEdit", {
-//         viewTitle: "Insert Product"
-//     });
-// });
+router.post("/addpro", async (req, res) => {
+  const imagePath = req.body.imagePath;
+  const link = req.body.link;
+  const name = req.body.name;
+  const price = req.body.price;
+  const status = req.body.status;
 
-// router.post("/", (req, res) => {
-//     if (req.body._id == "") {
-//         insertRecord(req, res); 
-//     } else {
-//         updateRecord(req, res);
-//     }
-// });
+  const addpro = new Product({
+    imagePath: imagePath,
+    link: link,
+    name: name,
+    price: price,
+    status: status,
+  });
 
-// router.get('/list', (req, res) => {
-//     Product.find((err, docs) => {
-//         if (!err) {
-//             res.render("product/list", {
-//                 list: docs
-//             });
-//         }
-//         else {
-//             console.log('Error in retrieving product list :' + err);
-//         }
-//     });
-// });
+  await addpro.save((err, res) => {
+    if (err) console.error(err);
+    else {
+      console.log(err);
+    }
+  });
+  req.flash("message", "Produk berhasil ditambahkan!");
+  res.redirect("/dashboard");
+});
 
-// router.get('/:id', (req, res) => {
-//     Product.findById(req.params.id, (err, doc) => {
-//         if (!err) {
-//             res.render("product/addOrEdit", {
-//                 viewTitle: "Update Product",
-//                 product: doc
-//             });
-//         }
-//     });
-// });
+router.get("/delete/:id", (req, res) => {
+  Product.findByIdAndDelete(req.params.id, (err) => {
+    if (!err) {
+      req.flash("message", "Produk berhasil dihapus!");
+      res.redirect("/dashboard");
+    } else {
+      console.log(err);
+    }
+  });
+});
 
-// router.get('/delete/:id', (req, res) => {
-//     Product.findByIdAndRemove(req.params.id, (err, doc) => {
-//         if (!err) {
-//             res.redirect('/product/list');
-//         }                                 
-//         else { console.log('Error in product delete :' + err); }
-//     });
-// });
+//show update
+router.get("/editpro/:id", (req, res, next) => {
+  Product.findOneAndUpdate(
+    { _id: req.params.id },
+    req.body,
+    { new: true },
+    (err, data) => {
+      res.render("pages/editpro", { products: data });
+    }
+  );
+});
 
-// module.exports = router;
+//update
+router.post("/editpro/:id", (req, res, next) => {
+  Product.findByIdAndUpdate({ _id: req.params.id }, req.body, (err) => {
+    if (err) {
+      console.log("Update gagal");
+      next(err);
+    } else {
+      req.flash("message", "Produk berhasil diupdate!");
+      res.redirect("/dashboard");
+    }
+  });
+});
+
+module.exports = router;

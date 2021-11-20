@@ -103,9 +103,9 @@
                   <%= product.status %>
                 </td>
                 <td class="table-light" style="display: flex; justify-content: space-evenly;">
-                  <a href="/addpro/editpro/<%= product._id %>"><button type="button"
+                  <a href="/product/editpro/<%= product._id %>"><button type="button"
                       class="btn btn-warning">edit</button></a>
-                  <form method="get" action="/addpro/delete/<%= product._id %>">
+                  <form method="get" action="/product/delete/<%= product._id %>">
                     <button type="submit" class="btn btn-danger"
                       onclick="return confirm('Yakin Produk Akan Dihapus ?')">delete</button>
                   </form>

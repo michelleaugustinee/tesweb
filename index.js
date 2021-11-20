@@ -46,13 +46,13 @@ const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
 const cartRouter = require("./routes/cart");
 const wishlistRouter = require("./routes/wishlist");
-const addProduct = require("./routes/addpro");
+const productRouter = require("./routes/product");
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
 app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
-app.use("/addpro", addProduct);
+app.use("/product", productRouter);
 
 // Port untuk localhost
 const PORT = process.env.PORT || 3000;
