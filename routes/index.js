@@ -19,15 +19,12 @@ router.get("/productlist", async (req, res) => {
 
 router.get("/addpro", (req, res) => {
   res.render("pages/addpro");
-});
+})
 
 router.get("/dashboard", async (req, res) => {
   var data = await Product.find();
-  res.render("pages/dashboard", {
-    products: data,
-    message: req.flash("message"),
-  });
-});
+  res.render("pages/dashboard", { products: data, message: req.flash("message") });
+})
 
 router.get("/changepass", (req, res) => {
   res.render("pages/changepass");
@@ -125,14 +122,18 @@ router.get("/add-to-wishlist/:id", (req, res) => {
     req.session.wishlist ? req.session.wishlist : {}
   );
 
-  Product.findById(productId, function (err, product) {
-    if (err) {
-      return res.redirect("/productlist");
-    }
-    wishlist.add(product, product.id);
-    req.session.wishlist = wishlist;
-    res.redirect("/productlist");
-  });
+  if (req.session.isLoggedIn == true) {
+    Product.findById(productId, function (err, product) {
+      if (err) {
+        return res.redirect("/productlist");
+      }
+      wishlist.add(product, product.id);
+      req.session.wishlist = wishlist;
+      res.redirect("/productlist");
+    });
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // Menambahkan Produk yang diinginkan ke dalam Cart dari Page Product List
@@ -140,15 +141,19 @@ router.get("/add-to-cart/:id", (req, res, next) => {
   const productId = req.params.id;
   const cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  Product.findById(productId, function (err, product) {
-    if (err) {
-      return res.redirect("/productlist");
-    }
-    cart.add(product, product.id);
-    req.session.cart = cart;
-    console.log(req.session.cart);
-    res.redirect("/productlist");
-  });
+  if (req.session.isLoggedIn == true) {
+    Product.findById(productId, function (err, product) {
+      if (err) {
+        return res.redirect("/productlist");
+      }
+      cart.add(product, product.id);
+      req.session.cart = cart;
+      console.log(req.session.cart);
+      res.redirect("/productlist");
+    });
+  } else {
+    res.redirect("/login");
+  }
 });
 
 module.exports = router;
